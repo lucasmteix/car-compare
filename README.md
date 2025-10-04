@@ -11,3 +11,36 @@ Atualmente, os dados estão **hardcoded** (armazenados diretamente em um array e
 
 - `GET /cars` → retorna a lista completa de carros.  
 - `GET /cars/:id` → retorna os detalhes de um carro específico pelo `id`.
+
+## Frontend (Docker Temporário)
+
+O frontend é construído com **React** utilizando **Create React App (CRA)**.  
+Atualmente, existe uma forma temporária de rodar apenas o frontend usando Docker, **sem precisar instalar Node, npm ou dependências localmente**.  
+Futuramente, todo o projeto será executado com **Docker Compose**, integrando frontend, backend e banco de dados.
+
+### Como rodar o frontend via Docker
+
+1. Navegue até a pasta `frontend`:
+
+```bash
+cd frontend
+```
+
+2. Construa a imagem Docker
+
+```bash
+docker build -t car-catalog-frontend .
+```
+
+3. Excute o container:
+
+```bash
+docker run -p 3000:80 car-catalog-frontend
+```
+
+4. Abra o navegador e acesse:
+
+http://localhost:3000
+
+>⚠️ Observação: Esta é uma solução temporária para testar o frontend
+> isoladamente. Mais tarde, toda a aplicação será executada com Docker Compose para rodar frontend, backend e banco MySQL integrados.

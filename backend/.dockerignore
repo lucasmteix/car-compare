@@ -1,0 +1,36 @@
+# Dependências
+node_modules
+
+# Logs
+npm-debug.log
+*.log
+
+# Controle de versão
+.git
+.gitignore
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*
+
+# Arquivos de build
+dist
+build
+
+# Arquivos de desenvolvimento
+.vscode
+.idea
+
+# Arquivos temporários
+*.tmp
+*.bak
+
+# Arquivos de teste (se aplicável)
+tests
+__tests__
+*.test.js
+*.spec.js
+
+# Documentação (opcional, se não necessário no container)
+README.md

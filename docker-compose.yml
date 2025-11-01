@@ -1,0 +1,29 @@
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: carcompare
+      MYSQL_USER: caruser
+      MYSQL_PASSWORD: carpass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=caruser
+      - DB_PASS=carpass123
+      - DB_NAME=carcompare
+    depends_on:
+      - db
+
+volumes:
+  mysql-data:

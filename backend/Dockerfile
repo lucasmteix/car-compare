@@ -11,10 +11,10 @@ COPY package*.json ./
 RUN npm install
 
 # Copiar o código da aplicação
-COPY src ./src
+COPY . . 
 
 # Expor a porta padrão do backend (ajuste se necessário)
 EXPOSE 3000
 
 # Comando para iniciar a aplicação
-CMD ["npm", "start"]
+CMD ["node", "src/index.js"]

@@ -1,55 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CarCard from "../components/CarCard";
 
-const cars = [
-  {
-    id: 1,
-    name: "Tesla Model 3",
-    year: 2023,
-    category: "Sedan Elétrico",
-    power: "283 cv",
-    image: "/images/tesla.jpg"
-  },
-  {
-    id: 2,
-    name: "BMW i4",
-    year: 2024,
-    category: "Coupé Elétrico",
-    power: "340 cv",
-    image: "/images/bmw.jpg"
-  },
-  {
-    id: 3,
-    name: "Civic Si",
-    year: 2008,
-    category: "Sedan Esportivo",
-    power: "192 cv",
-    image: "/images/civic.jpg"
-  },
-  {
-    id: 4,
-    name: "Audi A5",
-    year: 2016,
-    category: "Coupé Premium",
-    power: "252 cv",
-    image: "/images/audi.jpg"
-  }
-];
-
-export default function Catalog() {
+export default function Catalog(){
+  const [cars, setCars] = useState([]);
   const [query, setQuery] = useState("");
 
+  useEffect(() =>{
+    fetch("http://localhost:3000/api/cars")
+      .then(res => res.json())
+      .then(data => setCars(data))
+      .catch(err => console.error("Erro ao carregar os carros:", err))
+  }, []);
+
   const filteredCars = cars.filter(car =>
-    car.name.toLowerCase().includes(query.toLowerCase())
+    car.model.toLowerCase().includes(query.toLowerCase())
   );
 
   const handleCompare = (car) => {
-    alert(`Você selecionou para comparar: ${car.name}`);
-    // Aqui depois você pode abrir modal ou redirecionar pra tela de comparação
+    alert(`Você selecionou para comparar: ${car.model}`);
   };
 
   return (
-    <div style={{ backgroundColor: "#f7f8fa", minHeight: "100vh" }}>
+    <div style={{backgroundColor: "#f7f8a", minHeight: "100vh" }}>
       <header
         style={{
           backgroundColor: "#0d47a1",
@@ -63,11 +35,11 @@ export default function Catalog() {
         Car Compare
       </header>
 
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        <h2>Escolha os carros para comparar</h2>
+      <div style={{ textAlign: "center", marginTop: "2rem"}}>
+        <h2> Escolha os carros para comparar</h2>
         <input
           type="text"
-          placeholder="Buscar carro..."
+          placeholder="Buscar carro. . ."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{
@@ -95,7 +67,7 @@ export default function Catalog() {
             <CarCard key={car.id} car={car} onCompare={handleCompare} />
           ))
         ) : (
-          <p style={{ color: "#555", marginTop: "2rem" }}>Nenhum carro encontrado.</p>
+          <p style={{color: "#555", marginTop: "2rem"}}>Nenhum Carro encontrado.</p>
         )}
       </div>
     </div>

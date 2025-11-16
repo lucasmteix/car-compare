@@ -1,4 +1,6 @@
 export default function CarCard({ car, onCompare }) {
+
+  const placeholderImage = `https://source.unsplash.com/400x300/?car,${car.brand}`;
   return (
     <div
       style={{
@@ -19,9 +21,10 @@ export default function CarCard({ car, onCompare }) {
         e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
       }}
     >
-      <img
-        src={car.image}
-        alt={car.name}
+      
+      <img 
+        src={car.image ? car.image : placeholderImage} 
+        alt={`${car.brand} ${car.model}`}
         style={{
           width: "100%",
           height: "160px",
@@ -35,44 +38,36 @@ export default function CarCard({ car, onCompare }) {
       />
 
       <div style={{ padding: "1rem" }}>
-        {/* Nome + Ano na mesma linha */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "0.5rem"
+        {/* Modelo + Marca */}
+        <h2 style={{
+          fontSize: "1.35rem",
+          margin: 0,
+          fontWeight: "600",
+          color: "#111"
         }}>
-          <h2 style={{
-            fontSize: "1.45rem",
-            margin: 0,
-            fontWeight: "600",
-            color: "#111"
-          }}>
-            {car.name}
-          </h2>
-          <span style={{
-            fontSize: "1.2rem",
-            color: "#555",
-            flexShrink: 0 // evita que o ano encolha
-          }}>
-            {car.year}
-          </span>
-        </div>
+          {car.brand} {car.model}
+        </h2>
 
-        {/* Categoria + Potência */}
+        {/* Categoria */}
         <p style={{
           color: "#0d47a1",
           fontWeight: "500",
-          margin: "0.5rem 0 0",
-          fontSize: "1.1rem",
-          display: "flex",
-          gap: "1.7rem",
-          flexWrap: "wrap"
+          margin: "0.4rem 0 0",
+          fontSize: "1.05rem"
         }}>
-          <span>{car.category}</span>•<span>{car.power}</span>
+          {car.category}
         </p>
 
-        {/* Botão centralizado */}
+        {/* Potência */}
+        <p style={{
+          color: "#333",
+          margin: "0.3rem 0 0",
+          fontSize: "0.95rem"
+        }}>
+          <strong>{car.power_hp} cv</strong>
+        </p>
+
+        {/* Botão */}
         <div style={{ textAlign: "center", marginTop: "0.8rem" }}>
           <button
             onClick={() => onCompare(car)}
@@ -84,7 +79,7 @@ export default function CarCard({ car, onCompare }) {
               borderRadius: "6px",
               cursor: "pointer",
               fontWeight: "500",
-              minWidth: "120px", // largura mínima para todos os botões ficarem iguais
+              minWidth: "120px",
               transition: "background-color 0.3s ease"
             }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#1565c0")}

@@ -10,7 +10,7 @@
     "top_speed_kmh": 200,
     "category": "Sedan",
     "image": "http://localhost:3000/images/civic.jpg"
-  }
+  },
 
   {
     "id": 2,

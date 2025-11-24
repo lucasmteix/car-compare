@@ -1,6 +1,8 @@
-export default function CarCard({ car, onCompare }) {
+export default function CarCard({ car, onCompare, isSelected = false }) {
+  const imageUrl = car.image_url 
+    ? `http://localhost:3000/${car.image_url}` 
+    : `https://via.placeholder.com/400x300/cccccc/666666?text=Sem+Foto`;
 
-  const placeholderImage = `https://source.unsplash.com/400x300/?car,${car.brand}`;
   return (
     <div
       style={{
@@ -10,7 +12,8 @@ export default function CarCard({ car, onCompare }) {
         width: "260px",
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
         cursor: "pointer",
-        overflow: "hidden"
+        overflow: "hidden",
+        border: isSelected ? "2px solid #0d47a1" : "none",
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = "translateY(-5px)";
@@ -21,9 +24,8 @@ export default function CarCard({ car, onCompare }) {
         e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
       }}
     >
-      
       <img 
-        src={car.image ? car.image : placeholderImage} 
+        src={imageUrl} 
         alt={`${car.brand} ${car.model}`}
         style={{
           width: "100%",
@@ -38,42 +40,21 @@ export default function CarCard({ car, onCompare }) {
       />
 
       <div style={{ padding: "1rem" }}>
-        {/* Modelo + Marca */}
-        <h2 style={{
-          fontSize: "1.35rem",
-          margin: 0,
-          fontWeight: "600",
-          color: "#111"
-        }}>
+        <h2 style={{ fontSize: "1.35rem", margin: 0, fontWeight: "600", color: "#111" }}>
           {car.brand} {car.model}
         </h2>
-
-        {/* Categoria */}
-        <p style={{
-          color: "#0d47a1",
-          fontWeight: "500",
-          margin: "0.4rem 0 0",
-          fontSize: "1.05rem"
-        }}>
+        <p style={{ color: "#0d47a1", fontWeight: "500", margin: "0.4rem 0 0", fontSize: "1.05rem" }}>
           {car.category}
         </p>
-
-        {/* Potência */}
-        <p style={{
-          color: "#333",
-          margin: "0.3rem 0 0",
-          fontSize: "0.95rem"
-        }}>
+        <p style={{ color: "#333", margin: "0.3rem 0 0", fontSize: "0.95rem" }}>
           <strong>{car.power_hp} cv</strong>
         </p>
-
-        {/* Botão */}
         <div style={{ textAlign: "center", marginTop: "0.8rem" }}>
           <button
             onClick={() => onCompare(car)}
             style={{
               padding: "0.6rem 1rem",
-              backgroundColor: "#0d47a1",
+              backgroundColor: "#0d47a1", 
               color: "white",
               border: "none",
               borderRadius: "6px",
@@ -85,7 +66,7 @@ export default function CarCard({ car, onCompare }) {
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#1565c0")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#0d47a1")}
           >
-            Comparar
+            {isSelected ? "Desselecionar" : "Comparar"}
           </button>
         </div>
       </div>

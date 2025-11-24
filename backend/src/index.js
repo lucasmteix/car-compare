@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/api/cars', carRoutes);
 app.use('/api', testDbRouter);
 app.use('/public', express.static(path.join(__dirname, '../public')));

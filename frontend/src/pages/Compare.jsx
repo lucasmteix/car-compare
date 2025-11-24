@@ -1,155 +1,198 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";  // Para links de navegação no header
+import { useLocation } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function Compare() {
+  const location = useLocation();
+  const preSelected = location.state?.cars || [];
+
   const [cars, setCars] = useState([]);
-  const [car1Id, setCar1Id] = useState("");
-  const [car2Id, setCar2Id] = useState("");
-  const [comparison, setComparison] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [selected, setSelected] = useState(preSelected);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/cars")
       .then(res => res.json())
-      .then(setCars)
-      .catch(err => console.error("Erro ao carregar carros:", err));
+      .then(setCars);
   }, []);
 
-  const handleCompare = async () => {
-    if (!car1Id || !car2Id || car1Id === car2Id) {
-      setError("Selecione dois carros diferentes!");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`http://localhost:3000/api/cars/compare/${car1Id}/${car2Id}`);
-      if (!res.ok) throw new Error("Erro na comparação");
-      const data = await res.json();
-      setComparison(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (preSelected.length >= 2) setSelected(preSelected);
+  }, [preSelected]);
+
+  const handleSelect = (index, newCarId) => {
+    const newSelected = [...selected];
+    const newCar = cars.find(c => c.id === Number(newCarId));
+    if (newCar && !newSelected.some(c => c?.id === newCar.id)) {
+      if (index < newSelected.length) newSelected[index] = newCar;
+      else if (newSelected.length < 4) newSelected.push(newCar);
+      setSelected(newSelected.filter(Boolean));
     }
   };
 
-  const getCarById = (id) => cars.find(car => car.id === Number(id)) || {};
+  const getHighlight = (key, values) => {
+    if (key === "weight_kg" || key === "price") {
+      const min = Math.min(...values);
+      return values.map(v => v === min ? "#c8e6c9" : "");
+    }
+    const max = Math.max(...values);
+    return values.map(v => v === max ? "#c8e6c9" : "");
+  };
+
+  const attributes = [
+    { label: "Potência (cv)", key: "power_hp", highlight: true },
+    { label: "Torque (Nm)", key: "torque_nm", highlight: true },
+    { label: "Peso (kg)", key: "weight_kg", highlight: true },
+    { label: "Vel. Máx (km/h)", key: "top_speed_kmh", highlight: true },
+    { label: "Preço (R$)", key: "price", highlight: true },
+    { label: "Categoria", key: "category", highlight: false },
+    { label: "Tração", key: "traction", highlight: false },
+    { label: "Combustível", key: "fuel_type", highlight: false },
+  ];
 
   return (
-    <div style={{ backgroundColor: "#f7f8fa", minHeight: "100vh", padding: "2rem" }}>
-      {/* Header simples para navegação */}
-      <header style={{ backgroundColor: "#0d47a1", color: "white", padding: "1rem", marginBottom: "2rem" }}>
-        <h1 style={{ margin: 0 }}>Car Compare</h1>
-        <nav>
-          <Link to="/" style={{ color: "white", margin: "0 1rem", textDecoration: "none" }}>Catálogo</Link>
-          <Link to="/brands" style={{ color: "white", margin: "0 1rem", textDecoration: "none" }}>Marcas</Link>
-          <Link to="/compare" style={{ color: "white", margin: "0 1rem", textDecoration: "none" }}>Comparar</Link>
-        </nav>
-      </header>
+    <div style={{ backgroundColor: "#f7f8fa", minHeight: "100vh", margin: 0, padding: 0 }}>
+      <Header />
 
-      <h1 style={{ textAlign: "center", color: "#333" }}>Comparar Carros</h1>
-      
-      <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
-        <select 
-          value={car1Id} 
-          onChange={e => setCar1Id(e.target.value)}
-          style={{ padding: "0.6rem", borderRadius: "8px", width: "200px" }}
-        >
-          <option value="">Selecione Carro 1</option>
-          {cars.map(car => (
-            <option key={car.id} value={car.id}>{car.brand} {car.model}</option>
+      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "2rem 1rem" }}>
+        <h1 style={{ textAlign: "center", color: "#333", marginBottom: "2.5rem", fontSize: "2.4rem", fontWeight: "bold" }}>
+          Comparação de Carros
+        </h1>
+
+        {/* Dropdowns */}
+        <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
+          {[0, 1, 2, 3].map(index => (
+            <select
+              key={index}
+              value={selected[index]?.id || ""}
+              onChange={e => handleSelect(index, e.target.value)}
+              style={{
+                padding: "0.9rem 1.2rem",
+                borderRadius: "12px",
+                width: "240px",
+                border: "2px solid #ddd",
+                fontSize: "1rem",
+                backgroundColor: "white"
+              }}
+            >
+              <option value="">Selecione o Carro {index + 1}</option>
+              {cars.map(car => (
+                <option key={car.id} value={car.id}>{car.brand} {car.model}</option>
+              ))}
+            </select>
           ))}
-        </select>
-        
-        <select 
-          value={car2Id} 
-          onChange={e => setCar2Id(e.target.value)}
-          style={{ padding: "0.6rem", borderRadius: "8px", width: "200px" }}
-        >
-          <option value="">Selecione Carro 2</option>
-          {cars.map(car => (
-            <option key={car.id} value={car.id}>{car.brand} {car.model}</option>
-          ))}
-        </select>
-        
-        <button 
-          onClick={handleCompare}
-          style={{ 
-            padding: "0.6rem 1rem", 
-            backgroundColor: "#0d47a1", 
-            color: "white", 
-            border: "none", 
-            borderRadius: "8px", 
-            cursor: "pointer" 
-          }}
-        >
-          Comparar
-        </button>
-      </div>
-
-      {error && <p style={{ textAlign: "center", color: "red" }}>{error}</p>}
-      {loading && <p style={{ textAlign: "center" }}>Carregando comparação...</p>}
-
-      {comparison && (
-        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-          <h2 style={{ textAlign: "center" }}>{comparison.modelos}</h2>
-          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
-            <thead>
-              <tr style={{ backgroundColor: "#eee" }}>
-                <th style={{ padding: "0.8rem", textAlign: "left" }}>Atributo</th>
-                <th style={{ padding: "0.8rem" }}>{getCarById(car1Id).brand} {getCarById(car1Id).model}</th>
-                <th style={{ padding: "0.8rem" }}>{getCarById(car2Id).brand} {getCarById(car2Id).model}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ padding: "0.8rem" }}>Potência (cv)</td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car1Id).power_hp > getCarById(car2Id).power_hp ? "#d4edda" : "" }}>
-                  {getCarById(car1Id).power_hp}
-                </td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car2Id).power_hp > getCarById(car1Id).power_hp ? "#d4edda" : "" }}>
-                  {getCarById(car2Id).power_hp}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: "0.8rem" }}>Torque (Nm)</td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car1Id).torque_nm > getCarById(car2Id).torque_nm ? "#d4edda" : "" }}>
-                  {getCarById(car1Id).torque_nm}
-                </td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car2Id).torque_nm > getCarById(car1Id).torque_nm ? "#d4edda" : "" }}>
-                  {getCarById(car2Id).torque_nm}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: "0.8rem" }}>Categoria</td>
-                <td style={{ padding: "0.8rem" }}>{getCarById(car1Id).category}</td>
-                <td style={{ padding: "0.8rem" }}>{getCarById(car2Id).category}</td>
-              </tr>
-              {/* Adicione mais rows para outros campos do backend, ex: weight_kg, top_speed_kmh, price */}
-              <tr>
-                <td style={{ padding: "0.8rem" }}>Peso (kg)</td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car1Id).weight_kg < getCarById(car2Id).weight_kg ? "#d4edda" : "" }}>  {/* Menor peso é "melhor" */}
-                  {getCarById(car1Id).weight_kg}
-                </td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car2Id).weight_kg < getCarById(car1Id).weight_kg ? "#d4edda" : "" }}>
-                  {getCarById(car2Id).weight_kg}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: "0.8rem" }}>Velocidade Máx (km/h)</td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car1Id).top_speed_kmh > getCarById(car2Id).top_speed_kmh ? "#d4edda" : "" }}>
-                  {getCarById(car1Id).top_speed_kmh}
-                </td>
-                <td style={{ padding: "0.8rem", backgroundColor: getCarById(car2Id).top_speed_kmh > getCarById(car1Id).top_speed_kmh ? "#d4edda" : "" }}>
-                  {getCarById(car2Id).top_speed_kmh}
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-      )}
+
+        {selected.length >= 2 && (
+          <>
+            {/* Fotos – limpas, alinhadas e perfeitas */}
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              gap: "3rem",
+              marginBottom: "4rem"
+            }}>
+              {selected.map(car => (
+                <div key={car.id} style={{ textAlign: "center" }}>
+                  <div style={{
+                    width: "280px",
+                    height: "170px",
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                    boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
+                    transition: "transform 0.3s ease"
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
+                  onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+                  >
+                    <img
+                      src={`http://localhost:3000/${car.image_url}`}
+                      alt={car.model}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  </div>
+                  <h3 style={{ margin: "1.2rem 0 0", fontSize: "1.4rem", color: "#222", fontWeight: "600" }}>
+                    {car.brand} {car.model}
+                  </h3>
+                </div>
+              ))}
+            </div>
+
+            {/* Tabela – perfeita e totalmente responsiva */}
+            <div style={{
+              backgroundColor: "white",
+              borderRadius: "20px",
+              overflow: "hidden",
+              boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+            }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ backgroundColor: "#0d47a1", color: "white" }}>
+                    <th style={{
+                      padding: "1.4rem",
+                      textAlign: "left",
+                      fontSize: "1.15rem",
+                      minWidth: "180px"
+                    }}>
+                      Atributo
+                    </th>
+                    {selected.map(car => (
+                      <th key={car.id} style={{
+                        padding: "1.2rem 0.8rem",
+                        textAlign: "center",
+                        fontSize: "1rem",
+                        minWidth: "140px"
+                      }}>
+                        <div style={{ fontSize: "0.9rem", lineHeight: "1.3" }}>
+                          {car.brand}<br />{car.model}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {attributes.map((attr, idx) => {
+                    const values = selected.map(c =>
+                      attr.key === "price" ? Number(c[attr.key] || Infinity) : Number(c[attr.key] || 0)
+                    );
+                    const highlights = attr.highlight ? getHighlight(attr.key, values) : Array(selected.length).fill("");
+
+                    return (
+                      <tr key={attr.label} style={{
+                        borderBottom: idx < attributes.length - 1 ? "1px solid #e0e0e0" : "none"
+                      }}>
+                        <td style={{
+                          padding: "1.2rem 1.4rem",
+                          fontWeight: "600",
+                          backgroundColor: "#f9f9f9",
+                          fontSize: "1.05rem"
+                        }}>
+                          {attr.label}
+                        </td>
+                        {selected.map((car, i) => (
+                          <td key={i} style={{
+                            padding: "1.2rem 0.8rem",
+                            textAlign: "center",
+                            backgroundColor: highlights[i],
+                            fontSize: "1rem",
+                            fontWeight: highlights[i] ? "bold" : "normal"
+                          }}>
+                            {car[attr.key] !== undefined && car[attr.key] !== null
+                              ? attr.key === "price"
+                                ? Number(car[attr.key]).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+                                : car[attr.key]
+                              : "—"}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

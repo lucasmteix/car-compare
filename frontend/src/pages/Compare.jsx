@@ -84,7 +84,7 @@ export default function Compare() {
 
         {selected.length >= 2 && (
           <>
-            {/* Fotos – limpas, alinhadas e perfeitas */}
+            {/* Fotos dos carros */}
             <div style={{
               display: "flex",
               justifyContent: "center",
@@ -118,7 +118,7 @@ export default function Compare() {
               ))}
             </div>
 
-            {/* Tabela – perfeita e totalmente responsiva */}
+            {/* TABELA */}
             <div style={{
               backgroundColor: "white",
               borderRadius: "20px",
@@ -129,10 +129,12 @@ export default function Compare() {
                 <thead>
                   <tr style={{ backgroundColor: "#0d47a1", color: "white" }}>
                     <th style={{
-                      padding: "1.4rem",
+                      padding: "1.4rem 1rem",
                       textAlign: "left",
-                      fontSize: "1.15rem",
-                      minWidth: "180px"
+                      fontSize: "1.1rem",
+                      width: "150px",
+                      minWidth: "130px",
+                      maxWidth: "160px"
                     }}>
                       Atributo
                     </th>
@@ -162,10 +164,14 @@ export default function Compare() {
                         borderBottom: idx < attributes.length - 1 ? "1px solid #e0e0e0" : "none"
                       }}>
                         <td style={{
-                          padding: "1.2rem 1.4rem",
+                          padding: "1.2rem 1rem",
                           fontWeight: "600",
                           backgroundColor: "#f9f9f9",
-                          fontSize: "1.05rem"
+                          fontSize: "1.05rem",
+                          width: "150px",
+                          minWidth: "130px",
+                          maxWidth: "160px",
+                          whiteSpace: "nowrap"
                         }}>
                           {attr.label}
                         </td>

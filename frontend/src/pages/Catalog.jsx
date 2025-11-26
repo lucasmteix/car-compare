@@ -125,8 +125,10 @@ export default function Catalog() {
         display: "flex",
         flexWrap: "wrap",
         justifyContent: "center",
-        gap: "2.2rem",
-        padding: "3rem 1rem"
+        gap: "2.8rem",
+        padding: "3rem 2rem",
+        maxWidth: "1600px",
+        margin: "0 auto"
       }}>
         {filteredCars.length > 0 ? (
           filteredCars.map(car => (

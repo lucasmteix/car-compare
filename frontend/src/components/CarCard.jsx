@@ -7,69 +7,127 @@ export default function CarCard({ car, onCompare, isSelected = false }) {
     <div
       style={{
         backgroundColor: "white",
-        borderRadius: "10px",
-        boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-        width: "260px",
-        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        borderRadius: "16px",
+        boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+        width: "280px",
+        transition: "all 0.3s ease",
         cursor: "pointer",
         overflow: "hidden",
-        border: isSelected ? "2px solid #0d47a1" : "none",
+        position: "relative",
+        ...(isSelected && {
+          boxShadow: "0 0 0 4px #0d47a1, 0 6px 16px rgba(0,0,0,0.2)"
+        })
       }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = "translateY(-5px)";
-        e.currentTarget.style.boxShadow = "0 8px 16px rgba(0,0,0,0.2)";
+        if (!isSelected) {
+          e.currentTarget.style.transform = "translateY(-8px)";
+          e.currentTarget.style.boxShadow = "0 16px 32px rgba(0,0,0,0.22)";
+        }
       }}
       onMouseLeave={e => {
+        if (!isSelected) {
         e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+        e.currentTarget.style.boxShadow = "0 6px 16px rgba(0,0,0,0.12)";
+        }
       }}
     >
-      <img 
-        src={imageUrl} 
-        alt={`${car.brand} ${car.model}`}
-        style={{
-          width: "100%",
-          height: "160px",
-          objectFit: "cover",
-          borderTopLeftRadius: "10px",
-          borderTopRightRadius: "10px",
-          transition: "transform 0.3s ease"
-        }}
-        onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
-        onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-      />
+      {/* Foto */}
+      <div style={{ overflow: "hidden", borderRadius: "13px 13px 0 0" }}>
+        <img 
+          src={imageUrl} 
+          alt={`${car.brand} ${car.model}`}
+          style={{
+            width: "100%",
+            height: "180px",
+            objectFit: "cover",
+            transition: "transform 0.4s ease"
+          }}
+          onMouseEnter={e => e.currentTarget.style.transform = "scale(1.08)"}
+          onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+        />
+      </div>
 
-      <div style={{ padding: "1rem" }}>
-        <h2 style={{ fontSize: "1.35rem", margin: 0, fontWeight: "600", color: "#111" }}>
+      {/* texto do card */}
+      <div style={{ padding: "1.2rem" }}>
+        <h2 style={{ 
+          fontSize: "1.45rem", 
+          margin: "0 0 0.4rem 0", 
+          fontWeight: "700", 
+          color: "#111",
+          lineHeight: "1.2"
+        }}>
           {car.brand} {car.model}
         </h2>
-        <p style={{ color: "#0d47a1", fontWeight: "500", margin: "0.4rem 0 0", fontSize: "1.05rem" }}>
+
+        <p style={{ 
+          color: "#0d47a1", 
+          fontWeight: "600", 
+          margin: "0 0 0.6rem 0", 
+          fontSize: "1.15rem"
+        }}>
           {car.category}
         </p>
-        <p style={{ color: "#333", margin: "0.3rem 0 0", fontSize: "0.95rem" }}>
+
+        <p style={{ 
+          color: "#222", 
+          margin: "0 0 1rem 0", 
+          fontSize: "1rem",
+          fontWeight: "500",
+          letterSpacing: "0.3px"
+        }}>
+          <strong>{car.year}</strong>
+          <span style={{ margin: "0 10px" }}>•</span>
           <strong>{car.power_hp} cv</strong>
         </p>
-        <div style={{ textAlign: "center", marginTop: "0.8rem" }}>
+
+        {/* botao */}
+        <div style={{ textAlign: "center" }}>
           <button
-            onClick={() => onCompare(car)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCompare(car);
+            }}
             style={{
-              padding: "0.6rem 1rem",
-              backgroundColor: "#0d47a1", 
+              padding: "0.75rem 1.8rem",
+              backgroundColor: isSelected ? "#d32f2f" : "#0d47a1",
               color: "white",
               border: "none",
-              borderRadius: "6px",
+              borderRadius: "12px",
               cursor: "pointer",
-              fontWeight: "500",
-              minWidth: "120px",
-              transition: "background-color 0.3s ease"
+              fontWeight: "600",
+              fontSize: "1.05rem",
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 14px rgba(13,71,161,0.4)"
             }}
-            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#1565c0")}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#0d47a1")}
+            onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
           >
-            {isSelected ? "Desselecionar" : "Comparar"}
+            {isSelected ? "Remover" : "Comparar"}
           </button>
         </div>
       </div>
+
+      {/* simbool de check no canto pra ficar bonitinho */}
+      {isSelected && (
+        <div style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          width: "28px",
+          height: "28px",
+          backgroundColor: "#0d47a1",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+          zIndex: 10
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+      )}
     </div>
   );
 }

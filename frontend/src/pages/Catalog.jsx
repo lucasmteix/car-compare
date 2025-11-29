@@ -67,13 +67,16 @@ export default function Catalog() {
         style={{
           backgroundColor: "var(--bg-page)",
           color: "var(--text)",
-          borderRadius: "24px",
-          padding: "2.5rem",
+          borderRadius: "28px",
+          padding: "2rem 2.5rem",
           margin: "2rem auto",
-          maxWidth: "1500px",
+          maxWidth: "1400px",
           boxShadow: "var(--shadow)",
           transition: "all 0.4s ease",
-          paddingBottom: "120px"
+          paddingBottom: "160px",
+          position: "relative",
+          overflow: "visible",
+          zIndex: 1
         }}
       >
         {/* Título dinâmico */}
@@ -183,9 +186,9 @@ export default function Catalog() {
         <div
           style={{
             position: "fixed",
-            bottom: "30px",
-            right: "30px",
-            zIndex: 999,
+            bottom: "40px",
+            right: "40px",
+            zIndex: 9999,
             animation: selectedCars.length >= 2 ? "pulse 2s infinite" : "none"
           }}
         >

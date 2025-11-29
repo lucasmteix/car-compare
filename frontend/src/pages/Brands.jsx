@@ -8,7 +8,7 @@ export default function Brands() {
   const navigate = useNavigate();  
 
   useEffect(() => {
-    fetch("http://backend:3000/api/cars/brands")
+    fetch("http://localhost:3000/api/cars/brands")
       .then(res => res.json())
       .then(setBrands)
       .catch(err => console.error("Erro ao carregar marcas:", err));

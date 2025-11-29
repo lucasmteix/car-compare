@@ -1,8 +1,7 @@
-// components/CarCard.jsx
 import { useTheme } from "../ThemeProvider";
 
 export default function CarCard({ car, onCompare, isSelected = false }) {
-  const { isDark } = useTheme(); // Pega o tema global!
+  const { isDark } = useTheme();
 
   const imageUrl = car.image_url
     ? `http://localhost:3000/${car.image_url}`
@@ -15,46 +14,62 @@ export default function CarCard({ car, onCompare, isSelected = false }) {
       style={{
         backgroundColor: "var(--bg-card)",
         color: "var(--text)",
-        borderRadius: "24px",
-        boxShadow: "var(--shadow)",
-        width: "340px",
+        borderRadius: "28px",
+        boxShadow: isSelected
+          ? "0 0 0 6px #0d47a1, 0 20px 40px rgba(13,71,161,0.35)"
+          : "var(--shadow)",
+        width: "380px",
         overflow: "hidden",
         transition: "all 0.4s ease",
         cursor: "pointer",
         position: "relative",
-        border: `1px solid var(--border)`
+        transform: isSelected ? "translateY(-12px)" : "none",
       }}
-      onMouseEnter={(e) => !isSelected && (e.currentTarget.style.transform = "translateY(-12px) scale(1.02)")}
-      onMouseLeave={(e) => !isSelected && (e.currentTarget.style.transform = "translateY(0) scale(1)")}
+      onMouseEnter={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.transform = "translateY(-20px) scale(1.04)";
+          e.currentTarget.style.boxShadow = "0 30px 60px rgba(13,71,161,0.4)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isSelected) {
+          e.currentTarget.style.transform = "translateY(0) scale(1)";
+          e.currentTarget.style.boxShadow = "var(--shadow)";
+        }
+      }}
     >
       {/* Foto */}
-      <div style={{ height: "210px", overflow: "hidden", position: "relative" }}>
+      <div style={{ height: "240px", overflow: "hidden", position: "relative" }}>
         <img
           src={imageUrl}
           alt={`${car.brand} ${car.model}`}
-          style={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease" }}
+          style={{ width: "100%", height: "100%", objectFit: "cover", transition: "0.4s" }}
         />
         {/* Overlay sutil no hover */}
         <div style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.4))",
+          background: "linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5))",
           opacity: 0,
           transition: "opacity 0.4s ease"
         }}
-          onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
-          onMouseLeave={(e) => e.currentTarget.style.opacity = 0}
+          onMouseEnter={e => e.currentTarget.style.opacity = 1}
+          onMouseLeave={e => e.currentTarget.style.opacity = 0}
         />
       </div>
 
-      <div style={{ padding: "1.6rem" }}>
+      <div style={{ padding: "2rem 1.8rem" }}>
         {/* Marca + Modelo */}
         <h2 style={{
-          fontSize: "1.65rem",
+          fontSize: "1.85rem",
           fontWeight: "800",
-          margin: "0 0 0.4rem",
+          textAlign: "center",
+          margin: "0 0 0.8rem",
           color: "var(--text)",
-          letterSpacing: "-0.5px"
+          minHeight: "76px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}>
           {car.brand} {car.model}
         </h2>
@@ -63,85 +78,78 @@ export default function CarCard({ car, onCompare, isSelected = false }) {
         <p style={{
           color: "var(--accent)",
           fontWeight: "700",
-          fontSize: "1.15rem",
-          marginBottom: "1.2rem",
+          fontSize: "1.25rem",
+          textAlign: "center",
+          margin: "0 0 1.8rem",
           textTransform: "uppercase",
-          letterSpacing: "1px"
+          letterSpacing: "1.5px"
         }}>
           {car.category || "Sem categoria"}
         </p>
 
         {/* Informações técnicas - Grid limpo */}
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "0.7rem 1rem",
-          fontSize: "0.98rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          fontSize: "1rem",
           color: "var(--text-light)",
-          marginBottom: "1.2rem"
+          minHeight: "156px",
+          marginBottom: "1.8rem"
         }}>
-          <div><strong>Ano:</strong> {car.year || "—"}</div>
-          <div><strong>Potência:</strong> {car.power_hp ? `${car.power_hp} cv` : "—"}</div>
-
-          <div>
-            <strong>{isElectric ? "Cidade:" : "Cidade:"}</strong>{" "}
-            {isElectric
-              ? (car.wh_km_city ? `${car.wh_km_city} Wh/km` : "—")
-              : (car.km_l_city ? `${car.km_l_city} km/l` : "—")}
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span><strong>Ano:</strong> {car.year || "—"}</span>
+            <span><strong>Potência:</strong> {car.power_hp ? `${car.power_hp} cv` : "—"}</span>
           </div>
-          <div>
-            <strong>{isElectric ? "Estrada:" : "Estrada:"}</strong>{" "}
-            {isElectric
-              ? (car.wh_km_road ? `${car.wh_km_road} Wh/km` : "—")
-              : (car.km_l_road ? `${car.km_l_road} km/l` : "—")}
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span><strong>Cidade:</strong> {isElectric ? `${car.wh_km_city || "—"} Wh/km` : `${car.km_l_city || "—"} km/l`}</span>
+            <span><strong>Estrada:</strong> {isElectric ? `${car.wh_km_road || "—"} Wh/km` : `${car.km_l_road || "—"} km/l`}</span>
           </div>
-
-          <div><strong>Tração:</strong> {car.traction || "—"}</div>
-          <div>
-            <strong>Combustível:</strong>{" "}
-            <span style={{
-              padding: "4px 10px",
-              borderRadius: "8px",
-              fontSize: "0.8rem",
-              fontWeight: "700",
-              color: "white",
-              backgroundColor:
-                car.fuel_type === "Elétrico" ? "#16a34a" :
-                car.fuel_type === "Híbrido" ? "#2563eb" :
-                car.fuel_type === "Gasolina" ? "#dc2626" :
-                car.fuel_type === "Álcool" ? "#ea580c" : "#64748b"
-            }}>
-              {car.fuel_type || "—"}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span><strong>Tração:</strong> {car.traction || "—"}</span>
+            <span>
+              <strong>Combustível:</strong>{" "}
+              <span style={{
+                padding: "6px 14px",
+                borderRadius: "12px",
+                fontSize: "0.85rem",
+                fontWeight: "700",
+                color: "white",
+                backgroundColor:
+                  car.fuel_type === "Elétrico" ? "#16a34a" :
+                  car.fuel_type === "Híbrido" ? "#2563eb" :
+                  car.fuel_type === "Gasolina" ? "#dc2626" :
+                  car.fuel_type === "Álcool" ? "#ea580c" : "#64748b"
+              }}>
+                {car.fuel_type || "—"}
+              </span>
             </span>
           </div>
         </div>
 
         {/* Botão Comparar / Remover */}
-        <div style={{ textAlign: "center", marginTop: "1.4rem" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <button
             onClick={(e) => { e.stopPropagation(); onCompare(car); }}
             style={{
-              padding: "1rem 2.6rem",
+              padding: "1.1rem 2.8rem",
               backgroundColor: isSelected ? "#dc2626" : "var(--accent)",
               color: "white",
               border: "none",
-              borderRadius: "18px",
-              fontSize: "1.1rem",
+              borderRadius: "20px",
+              fontSize: "1.15rem",
               fontWeight: "700",
               cursor: "pointer",
+              minWidth: "240px",
+              height: "68px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
               boxShadow: isSelected 
-                ? "0 8px 25px rgba(220, 38, 38, 0.4)" 
-                : "0 8px 25px rgba(13, 71, 161, 0.35)",
-              transition: "all 0.3s ease",
-              minWidth: "160px"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.backgroundColor = isSelected ? "#b91c1c" : "var(--accent-hover)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.backgroundColor = isSelected ? "#dc2626" : "var(--accent)";
+                ? "0 10px 30px rgba(220,38,38,0.5)" 
+                : "0 10px 30px rgba(13,71,161,0.45)",
+              transition: "all 0.3s ease"
             }}
           >
             {isSelected ? "Remover da comparação" : "Adicionar à comparação"}
@@ -153,23 +161,22 @@ export default function CarCard({ car, onCompare, isSelected = false }) {
       {isSelected && (
         <div style={{
           position: "absolute",
-          top: "16px",
-          right: "16px",
-          background: "#dc2626",
-          color: "white",
-          width: "48px",
-          height: "48px",
+          top: "20px",
+          right: "20px",
+          width: "40px",
+          height: "40px",
+          backgroundColor: "#0d47a1",
           borderRadius: "50%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: "1.8rem",
-          fontWeight: "bold",
-          boxShadow: "0 8px 25px rgba(220, 38, 38, 0.5)",
           border: "4px solid white",
+          boxShadow: "0 8px 25px rgba(13,71,161,0.6)",
           zIndex: 10
         }}>
-          Check
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
         </div>
       )}
     </div>

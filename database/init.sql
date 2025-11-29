@@ -11,13 +11,13 @@ CREATE TABLE cars (
     torque_nm INT NOT NULL,
     weight_kg INT NOT NULL,
     traction ENUM('FWD', 'RWD', 'AWD', '4WD') NOT NULL,
-    top_speed_kmh INT NOT NULL,
+    top_speed_kmh INT DEFAULT NULL,
     category ENUM('Hatch', 'Sedan', 'SUV', 'Pickup', 'Esportivo', 'Elétrico', 'Híbrido') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     fuel_type ENUM('Gasolina', 'Diesel', 'Elétrico', 'Álcool', 'Híbrido') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    image_url VARCHAR(255) DEFAULT NULL
-    km_l_city DECIMAL(5,2) NOT NULL DEFAULT 10.00,
-    km_l_road DECIMAL(5,2) NOT NULL DEFAULT 12.00,
+    image_url VARCHAR(255) DEFAULT NULL,
+    km_l_city DECIMAL(5,2) DEFAULT NULL,
+    km_l_road DECIMAL(5,2) DEFAULT NULL,
 
     wh_km_city INT DEFAULT NULL,
     wh_km_road INT DEFAULT NULL
@@ -67,5 +67,5 @@ VALUES
 ('Jetta GLI', 'Volkswagen', 2014, 210, 280, 1400, 'FWD', 240, 'Sedan', 'Gasolina', 120000.00, 'images/jetta.jpg', 9, 13, NULL, NULL),
 ('Cayman GT4', 'Porsche', 2016, 385, 420, 1340, 'RWD', 295, 'Esportivo', 'Gasolina', 700000.00, 'images/cayman.jpg', 7, 11, NULL, NULL),
 ('GT', 'Ford', 2010, 550, 678, 1585, 'RWD', 330, 'Esportivo', 'Gasolina', 1500000.00, 'images/ford-gt.jpg', 4, 7, NULL, NULL),
-('X3 M', 'BMW', 2020, 503, 650, 1995, 'AWD', 250, 'SUV', 'Gasolina', 650000.00, 'images/bmw-x3m.jpg', 6, 9, NULL, NULL);
+('X3 M', 'BMW', 2020, 503, 650, 1995, 'AWD', 250, 'SUV', 'Gasolina', 650000.00, 'images/bmw-x3m.jpg', 6, 9, NULL, NULL),
 ('Prius', 'Toyota', 2024, 194, 220, 1450, 'FWD', 180, 'Sedan', 'Híbrido', 185000.00, 'images/prius.jpg', 25, 28, 130, 150);

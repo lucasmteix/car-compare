@@ -13,8 +13,7 @@ export default function Catalog() {
 
   // Carrega todos os carros
   useEffect(() => {
-    fetch("http://localhost:3000/api/cars")
-      .then(res => res.json())
+    fetch("http://localhost:3000/api/cars")      .then(res => res.json())
       .then(data => setCars(data))
       .catch(err => console.error("Erro ao carregar os carros:", err));
   }, []);

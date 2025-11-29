@@ -27,8 +27,7 @@ export default function TripCalculator() {
   const fuelPrices = { Gasolina: 5.89, Álcool: 4.19, Elétrico: 0.85 };
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/cars")
-      .then(r => r.json())
+    fetch("http://localhost:3000/api/cars")      .then(r => r.json())
       .then(setAllCars)
       .catch(() => console.error("Erro ao carregar carros"));
   }, []);

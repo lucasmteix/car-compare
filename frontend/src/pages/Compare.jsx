@@ -12,8 +12,7 @@ export default function Compare() {
   const [selected, setSelected] = useState(preSelected);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/cars")
-      .then((res) => res.json())
+    fetch("http://localhost:3000/api/cars")      .then((res) => res.json())
       .then(setCars)
       .catch((err) => console.error("Erro ao carregar carros:", err));
   }, []);

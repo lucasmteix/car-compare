@@ -1,7 +1,6 @@
 const mysql = require('mysql2/promise');
 const path = require('path');
 
-require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
 console.log('Banco usado:', process.env.DB_NAME);
 
 const pool = mysql.createPool({

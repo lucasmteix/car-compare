@@ -1,8 +1,10 @@
+// pages/Compare.jsx
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import Header from "../components/Header";
+import { useTheme } from "../ThemeProvider"; // Importante!
 
 export default function Compare() {
+  const { isDark } = useTheme();
   const location = useLocation();
   const preSelected = location.state?.cars || [];
 
@@ -11,8 +13,9 @@ export default function Compare() {
 
   useEffect(() => {
     fetch("http://localhost:3000/api/cars")
-      .then(res => res.json())
-      .then(setCars);
+      .then((res) => res.json())
+      .then(setCars)
+      .catch((err) => console.error("Erro ao carregar carros:", err));
   }, []);
 
   useEffect(() => {
@@ -21,89 +24,132 @@ export default function Compare() {
 
   const handleSelect = (index, newCarId) => {
     const newSelected = [...selected];
-    const newCar = cars.find(c => c.id === Number(newCarId));
-    if (newCar && !newSelected.some(c => c?.id === newCar.id)) {
-      if (index < newSelected.length) newSelected[index] = newCar;
-      else if (newSelected.length < 4) newSelected.push(newCar);
+    const newCar = cars.find((c) => c.id === Number(newCarId));
+
+    if (newCar && !newSelected.some((c) => c?.id === newCar.id)) {
+      if (index < newSelected.length) {
+        newSelected[index] = newCar;
+      } else if (newSelected.length < 4) {
+        newSelected.push(newCar);
+      }
       setSelected(newSelected.filter(Boolean));
     }
   };
 
   const getHighlight = (key, values) => {
     if (key === "weight_kg" || key === "price") {
-      const min = Math.min(...values);
-      return values.map(v => v === min ? "#c8e6c9" : "");
+      const min = Math.min(...values.filter((v) => v > 0));
+      return values.map((v) => (v === min ? (isDark ? "#1a4d2e" : "#c8e6c9") : ""));
     }
-    const max = Math.max(...values);
-    return values.map(v => v === max ? "#c8e6c9" : "");
+    const max = Math.max(...values.filter((v) => v > 0));
+    return values.map((v) => (v === max ? (isDark ? "#1a4d2e" : "#c8e6c9") : ""));
   };
 
   const attributes = [
-    { label: "Potência (cv)", key: "power_hp", highlight: true },
-    { label: "Torque (Nm)", key: "torque_nm", highlight: true },
-    { label: "Peso (kg)", key: "weight_kg", highlight: true },
-    { label: "Vel. Máx (km/h)", key: "top_speed_kmh", highlight: true },
-    { label: "Preço (R$)", key: "price", highlight: true },
-    { label: "Categoria", key: "category", highlight: false },
-    { label: "Tração", key: "traction", highlight: false },
-    { label: "Combustível", key: "fuel_type", highlight: false },
+    { label: "Potência (cv)",          key: "power_hp",       highlight: true },
+    { label: "Torque (Nm)",           key: "torque_nm",      highlight: true },
+    { label: "Peso (kg)",             key: "weight_kg",      highlight: true },
+    { label: "Vel. Máx (km/h)",       key: "top_speed_kmh",  highlight: true },
+    { label: "Preço (R$)",            key: "price",          highlight: true },
+    { label: "Consumo Cidade",        key: "km_l_city",      suffix: " km/l",   highlight: true },
+    { label: "Consumo Estrada",       key: "km_l_road",      suffix: " km/l",   highlight: true },
+    { label: "Elétrico Cidade",       key: "wh_km_city",     suffix: " Wh/km",  highlight: true },
+    { label: "Elétrico Estrada",      key: "wh_km_road",     suffix: " Wh/km",  highlight: true },
+    { label: "Categoria",             key: "category",       highlight: false },
+    { label: "Tração",                key: "traction",       highlight: false },
+    { label: "Combustível",           key: "fuel_type",      highlight: false },
   ];
 
   return (
-    <div style={{ backgroundColor: "#f7f8fa", minHeight: "100vh", margin: 0, padding: 0 }}>
-      <Header />
-
-      <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "2rem 1rem" }}>
-        <h1 style={{ textAlign: "center", color: "#333", marginBottom: "2.5rem", fontSize: "2.4rem", fontWeight: "bold" }}>
+    <div style={{
+      backgroundColor: "var(--bg-page)",
+      color: "var(--text)",
+      borderRadius: "28px",
+      padding: "3rem 2rem",
+      margin: "2rem auto",
+      maxWidth: "1600px",
+      boxShadow: "var(--shadow)",
+      transition: "all 0.4s ease"
+    }}>
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+        {/* Título */}
+        <h1 style={{
+          textAlign: "center",
+          fontSize: "3rem",
+          fontWeight: "bold",
+          marginBottom: "3rem",
+          background: "linear-gradient(90deg, var(--accent), #60a5fa)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text"
+        }}>
           Comparação de Carros
         </h1>
 
-        {/* Dropdowns */}
-        <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap", marginBottom: "3rem" }}>
-          {[0, 1, 2, 3].map(index => (
+        {/* Seletores de carro */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "1.5rem",
+          flexWrap: "wrap",
+          marginBottom: "4rem"
+        }}>
+          {[0, 1, 2, 3].map((index) => (
             <select
               key={index}
               value={selected[index]?.id || ""}
-              onChange={e => handleSelect(index, e.target.value)}
+              onChange={(e) => handleSelect(index, e.target.value)}
               style={{
-                padding: "0.9rem 1.2rem",
-                borderRadius: "12px",
-                width: "240px",
-                border: "2px solid #ddd",
-                fontSize: "1rem",
-                backgroundColor: "white"
+                padding: "1rem 1.4rem",
+                borderRadius: "18px",
+                width: "280px",
+                border: `2px solid var(--border)`,
+                backgroundColor: "var(--bg-input)",
+                color: "var(--text)",
+                fontSize: "1.1rem",
+                outline: "none",
+                boxShadow: "var(--shadow)",
+                transition: "all 0.3s ease"
               }}
+              onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
+              onBlur={(e) => e.target.style.borderColor = "var(--border)"}
             >
               <option value="">Selecione o Carro {index + 1}</option>
-              {cars.map(car => (
-                <option key={car.id} value={car.id}>{car.brand} {car.model}</option>
+              {cars.map((car) => (
+                <option key={car.id} value={car.id}>
+                  {car.brand} {car.model}
+                </option>
               ))}
             </select>
           ))}
         </div>
 
+        {/* Só mostra se tiver 2+ carros */}
         {selected.length >= 2 && (
           <>
-            {/* Fotos dos carros */}
+            {/* Imagens dos carros */}
             <div style={{
-              display: "flex",
-              justifyContent: "center",
-              flexWrap: "wrap",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
               gap: "3rem",
-              marginBottom: "4rem"
+              marginBottom: "5rem",
+              justifyContent: "center"
             }}>
-              {selected.map(car => (
+              {selected.map((car) => (
                 <div key={car.id} style={{ textAlign: "center" }}>
-                  <div style={{
-                    width: "280px",
-                    height: "170px",
-                    borderRadius: "20px",
-                    overflow: "hidden",
-                    boxShadow: "0 12px 30px rgba(0,0,0,0.18)",
-                    transition: "transform 0.3s ease"
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.transform = "translateY(-8px)"}
-                  onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+                  <div
+                    style={{
+                      width: "100%",
+                      maxWidth: "320px",
+                      height: "200px",
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                      boxShadow: "var(--shadow)",
+                      transition: "transform 0.4s ease",
+                      margin: "0 auto"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-12px) scale(1.02)"}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0) scale(1)"}
                   >
                     <img
                       src={`http://localhost:3000/${car.image_url}`}
@@ -111,42 +157,48 @@ export default function Compare() {
                       style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </div>
-                  <h3 style={{ margin: "1.2rem 0 0", fontSize: "1.4rem", color: "#222", fontWeight: "600" }}>
+                  <h3 style={{
+                    marginTop: "1.5rem",
+                    fontSize: "1.6rem",
+                    fontWeight: "700",
+                    color: "var(--text)"
+                  }}>
                     {car.brand} {car.model}
                   </h3>
                 </div>
               ))}
             </div>
 
-            {/* TABELA */}
+            {/* Tabela de comparação */}
             <div style={{
-              backgroundColor: "white",
-              borderRadius: "20px",
+              backgroundColor: "var(--bg-card)",
+              borderRadius: "24px",
               overflow: "hidden",
-              boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+              boxShadow: "var(--shadow)",
+              border: `1px solid var(--border)`
             }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
-                  <tr style={{ backgroundColor: "#0d47a1", color: "white" }}>
+                  <tr style={{ backgroundColor: "var(--accent)", color: "white" }}>
                     <th style={{
-                      padding: "1.4rem 1rem",
+                      padding: "1.6rem 1.4rem",
                       textAlign: "left",
-                      fontSize: "1.1rem",
-                      width: "150px",
-                      minWidth: "130px",
-                      maxWidth: "160px"
+                      fontSize: "1.2rem",
+                      fontWeight: "700"
                     }}>
                       Atributo
                     </th>
-                    {selected.map(car => (
+                    {selected.map((car) => (
                       <th key={car.id} style={{
-                        padding: "1.2rem 0.8rem",
+                        padding: "1.4rem 1rem",
                         textAlign: "center",
-                        fontSize: "1rem",
-                        minWidth: "140px"
+                        fontSize: "1.1rem"
                       }}>
-                        <div style={{ fontSize: "0.9rem", lineHeight: "1.3" }}>
-                          {car.brand}<br />{car.model}
+                        <div style={{ fontWeight: "bold" }}>
+                          {car.brand}
+                        </div>
+                        <div style={{ fontSize: "0.95rem", opacity: 0.9 }}>
+                          {car.model}
                         </div>
                       </th>
                     ))}
@@ -154,39 +206,47 @@ export default function Compare() {
                 </thead>
                 <tbody>
                   {attributes.map((attr, idx) => {
-                    const values = selected.map(c =>
+                    const values = selected.map((c) =>
                       attr.key === "price" ? Number(c[attr.key] || Infinity) : Number(c[attr.key] || 0)
                     );
-                    const highlights = attr.highlight ? getHighlight(attr.key, values) : Array(selected.length).fill("");
+                    const highlights = attr.highlight
+                      ? getHighlight(attr.key, values)
+                      : Array(selected.length).fill("");
 
                     return (
-                      <tr key={attr.label} style={{
-                        borderBottom: idx < attributes.length - 1 ? "1px solid #e0e0e0" : "none"
-                      }}>
+                      <tr
+                        key={attr.label}
+                        style={{
+                          borderBottom: idx < attributes.length - 1 ? `1px solid var(--border)` : "none"
+                        }}
+                      >
                         <td style={{
-                          padding: "1.2rem 1rem",
+                          padding: "1.4rem",
                           fontWeight: "600",
-                          backgroundColor: "#f9f9f9",
-                          fontSize: "1.05rem",
-                          width: "150px",
-                          minWidth: "130px",
-                          maxWidth: "160px",
+                          backgroundColor: isDark ? "#2d2d2d" : "#f8fafc",
+                          fontSize: "1.1rem",
                           whiteSpace: "nowrap"
                         }}>
                           {attr.label}
                         </td>
                         {selected.map((car, i) => (
-                          <td key={i} style={{
-                            padding: "1.2rem 0.8rem",
-                            textAlign: "center",
-                            backgroundColor: highlights[i],
-                            fontSize: "1rem",
-                            fontWeight: highlights[i] ? "bold" : "normal"
-                          }}>
-                            {car[attr.key] !== undefined && car[attr.key] !== null
+                          <td
+                            key={i}
+                            style={{
+                              padding: "1.4rem 1rem",
+                              textAlign: "center",
+                              backgroundColor: highlights[i],
+                              fontWeight: highlights[i] ? "bold" : "500",
+                              color: highlights[i] ? (isDark ? "#90ee90" : "#2e7d32") : "var(--text)"
+                            }}
+                          >
+                            {car[attr.key] !== undefined && car[attr.key] !== null && car[attr.key] !== ""
                               ? attr.key === "price"
-                                ? Number(car[attr.key]).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-                                : car[attr.key]
+                                ? Number(car[attr.key]).toLocaleString("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL"
+                                  })
+                                : `${car[attr.key]}${attr.suffix || ""}`
                               : "—"}
                           </td>
                         ))}
@@ -197,6 +257,18 @@ export default function Compare() {
               </table>
             </div>
           </>
+        )}
+
+        {/* Mensagem quando não tem carros suficientes */}
+        {selected.length < 2 && (
+          <div style={{
+            textAlign: "center",
+            padding: "6rem 2rem",
+            color: "var(--text-muted)",
+            fontSize: "1.5rem"
+          }}>
+            Selecione pelo menos 2 carros para comparar
+          </div>
         )}
       </div>
     </div>

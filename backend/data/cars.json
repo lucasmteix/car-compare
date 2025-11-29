@@ -9,7 +9,8 @@
     "traction": "FWD",
     "top_speed_kmh": 200,
     "category": "Sedan",
-    "image": "http://localhost:3000/images/civic.jpg"
+    "image": "http://localhost:3000/images/civic.jpg",
+    "consumption": "12 km/l"
   },
 
   {
@@ -22,6 +23,7 @@
     "traction": "FWD",
     "top_speed_kmh": 195,
     "category": "Sedan",
-    "image": "http://localhost:3000/images/corolla.jpg"
+    "image": "http://localhost:3000/images/corolla.jpg",
+    "consumption": "13 km/l"
   }
 ]

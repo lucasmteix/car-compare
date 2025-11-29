@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import Header from "../components/Header";
+import { useTheme } from "../ThemeProvider";
 
 export default function Brands() {
+  const { isDark } = useTheme();
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
@@ -12,22 +13,124 @@ export default function Brands() {
   }, []);
 
   return (
-    <div style={{ backgroundColor: "#f7f8fa", minHeight: "100vh", margin: 0, padding: 0 }}>
-      <Header />
+    <div style={{
+      backgroundColor: "var(--bg-page)",
+      color: "var(--text)",
+      borderRadius: "32px",
+      padding: "4rem 2rem",
+      margin: "2rem auto",
+      maxWidth: "1400px",
+      boxShadow: "var(--shadow)",
+      transition: "all 0.4s ease"
+    }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <h1 style={{
+          textAlign: "center",
+          fontSize: "3.5rem",
+          fontWeight: "900",
+          marginBottom: "4rem",
+          background: "linear-gradient(90deg, var(--accent), #60a5fa, #a78bfa)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+          letterSpacing: "-1px"
+        }}>
+          Todas as Marcas Disponíveis
+        </h1>
 
-      <div style={{ maxWidth: "1200px", margin: "2rem auto", padding: "0 2rem", textAlign: "center" }}>
-        <h1 style={{ color: "#333", marginBottom: "2rem" }}>Marcas de Carros</h1>
-        <ul style={{ listStyle: "none", padding: 0, maxWidth: "400px", margin: "0 auto" }}>
-          {brands.length ? (
-            brands.map((brand, idx) => (
-              <li key={idx} style={{ padding: "1rem", borderBottom: "1px solid #eee", fontSize: "1.2rem", color: "#555" }}>
-                {brand}
-              </li>
+        {/* Grid de marcas */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "2rem",
+          padding: "0 1rem"
+        }}>
+          {brands.length > 0 ? (
+            brands.sort().map((brand, idx) => (
+              <div
+                key={idx}
+                style={{
+                  backgroundColor: "var(--bg-card)",
+                  padding: "2.5rem 1.5rem",
+                  borderRadius: "24px",
+                  textAlign: "center",
+                  fontSize: "1.8rem",
+                  fontWeight: "700",
+                  color: "var(--text)",
+                  boxShadow: "var(--shadow)",
+                  border: `2px solid var(--border)`,
+                  transition: "all 0.4s ease",
+                  cursor: "default"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-12px) scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(13,71,161,0.3)";
+                  e.currentTarget.style.borderColor = "var(--accent)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0) scale(1)";
+                  e.currentTarget.style.boxShadow = "var(--shadow)";
+                  e.currentTarget.style.borderColor = "var(--border)";
+                }}
+              >
+                <div style={{
+                  background: "linear-gradient(135deg, var(--accent), #60a5fa)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  fontSize: "2.2rem",
+                  marginBottom: "0.5rem"
+                }}>
+                  {brand}
+                </div>
+                <div style={{
+                  fontSize: "1rem",
+                  color: "var(--text-muted)",
+                  fontWeight: "500"
+                }}>
+                  {brand}
+                </div>
+              </div>
             ))
           ) : (
-            <p style={{ color: "#555" }}>Carregando marcas...</p>
+            [...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  backgroundColor: "var(--bg-card)",
+                  padding: "2.5rem",
+                  borderRadius: "24px",
+                  boxShadow: "var(--shadow)",
+                  animation: "pulse 1.5s ease-in-out infinite",
+                  "@keyframes pulse": {
+                    "0%, 100%": { opacity: 0.6 },
+                    "50%": { opacity: 1 }
+                  }
+                }}
+              >
+                <div style={{
+                  height: "2.5rem",
+                  background: "linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%)",
+                  backgroundSize: "200% 100%",
+                  animation: "loading 1.5s infinite",
+                  borderRadius: "12px"
+                }} />
+              </div>
+            ))
           )}
-        </ul>
+        </div>
+
+        {/* Mensagem caso não tenha marcas */}
+        {brands.length === 0 && (
+          <div style={{
+            textAlign: "center",
+            padding: "6rem 2rem",
+            color: "var(--text-muted)",
+            fontSize: "1.6rem"
+          }}>
+            Nenhuma marca encontrada no momento
+          </div>
+        )}
       </div>
     </div>
   );

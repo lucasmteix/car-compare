@@ -27,12 +27,13 @@ const CarController = {
     const car = req.body;
     try {
       const [result] = await db.query(
-        `INSERT INTO cars (model, brand, year, power_hp, torque_nm, weight_kg, traction, top_speed_kmh, category, fuel_type, price, image_url)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO cars (model, brand, year, power_hp, torque_nm, weight_kg, traction, top_speed_kmh, category, fuel_type, price, image_url, km_l_city, km_l_road, wh_km_city, wh_km_road)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           car.model, car.brand, car.year, car.power_hp, car.torque_nm,
           car.weight_kg, car.traction, car.top_speed_kmh, car.category,
-          car.fuel_type, car.price, car.image_url
+          car.fuel_type, car.price, car.image_url,
+          car.km_l_city, car.km_l_road, car.wh_km_city, car.wh_km_road
         ]
       );
       res.status(201).json({ id: result.insertId, ...car });
@@ -47,11 +48,12 @@ const CarController = {
     const car = req.body;
     try {
       const [result] = await db.query(
-        `UPDATE cars SET model=?, brand=?, year=?, power_hp=?, torque_nm=?, weight_kg=?, traction=?, top_speed_kmh=?, category=?, fuel_type=?, price=?, image_url=? WHERE id=?`,
+        `UPDATE cars SET model=?, brand=?, year=?, power_hp=?, torque_nm=?, weight_kg=?, traction=?, top_speed_kmh=?, category=?, fuel_type=?, price=?, image_url=?, km_l_city=?, km_l_road=?, wh_km_city=?, wh_km_road=?  WHERE id=?`,
         [
           car.model, car.brand, car.year, car.power_hp, car.torque_nm,
           car.weight_kg, car.traction, car.top_speed_kmh, car.category,
-          car.fuel_type, car.price, car.image_url, id
+          car.fuel_type, car.price, car.image_url, car.km_l_city, car.km_l_road,
+          car.wh_km_city, car.wh_km_road, id
         ]
       );
       if (result.affectedRows === 0) return res.status(404).json({ error: "Carro não encontrado" });
@@ -76,13 +78,10 @@ const CarController = {
   async compare(req, res) {
     const { id1, id2 } = req.params;
     try {
-      const [[rows1], [rows2]] = await Promise.all([
+      const [[car1], [car2]] = await Promise.all([
         db.query('SELECT * FROM cars WHERE id = ?', [id1]),
         db.query('SELECT * FROM cars WHERE id = ?', [id2])
       ]);
-
-      const car1 = rows1[0];
-      const car2 = rows2[0];
 
       if (!car1 || !car2) {
         return res.status(404).json({ error: "Um dos carros não foi encontrado" });

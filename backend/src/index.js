@@ -4,17 +4,23 @@ const path = require('path');
 
 require('dotenv').config();
 
+
 const carRoutes = require('./routes/carRoutes');
 const testDbRouter = require('./routes/testeDb');
+//const carRoutesMock = require('../carRoutes_mock');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
 app.use(cors());
 app.use(express.json());
 
+
 app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.use('/api/cars', carRoutes);
+//app.use('/api/mock-cars', carRoutesMock);
 app.use('/api', testDbRouter);
 app.use('/public', express.static(path.join(__dirname, '../public')));
 
@@ -33,7 +39,7 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(PORT, () =>{
+app.listen(PORT, () => {
   console.log(`Backend rodando em http://localhost:${PORT}`);
-
+  console.log(`Acesse também em: http://127.0.0.1:${PORT}`);
 });

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../ThemeProvider";
+import { useNavigate } from "react-router-dom";  
 
 export default function Brands() {
   const { isDark } = useTheme();
   const [brands, setBrands] = useState([]);
+  const navigate = useNavigate();  
 
   useEffect(() => {
     fetch("http://localhost:3000/api/cars/brands")
@@ -12,6 +14,10 @@ export default function Brands() {
       .catch(err => console.error("Erro ao carregar marcas:", err));
   }, []);
 
+  const handleBrandClick = (brand) => {
+    const slug = brand.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/catalog/${slug}`);
+  };
   return (
     <div style={{
       backgroundColor: "var(--bg-page)",
@@ -49,6 +55,10 @@ export default function Brands() {
             brands.sort().map((brand, idx) => (
               <div
                 key={idx}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleBrandClick(brand)}
+                onKeyDown={(e) => e.key === "Enter" && handleBrandClick(brand)}
                 style={{
                   backgroundColor: "var(--bg-card)",
                   padding: "2.5rem 1.5rem",
@@ -60,7 +70,7 @@ export default function Brands() {
                   boxShadow: "var(--shadow)",
                   border: `2px solid var(--border)`,
                   transition: "all 0.4s ease",
-                  cursor: "default"
+                  cursor: "pointer"                   
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-12px) scale(1.05)";
@@ -88,26 +98,19 @@ export default function Brands() {
                   color: "var(--text-muted)",
                   fontWeight: "500"
                 }}>
-                  {brand}
+                  Ver todos os {brand}
                 </div>
               </div>
             ))
           ) : (
             [...Array(12)].map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: "var(--bg-card)",
-                  padding: "2.5rem",
-                  borderRadius: "24px",
-                  boxShadow: "var(--shadow)",
-                  animation: "pulse 1.5s ease-in-out infinite",
-                  "@keyframes pulse": {
-                    "0%, 100%": { opacity: 0.6 },
-                    "50%": { opacity: 1 }
-                  }
-                }}
-              >
+              <div key={i} style={{
+                backgroundColor: "var(--bg-card)",
+                padding: "2.5rem",
+                borderRadius: "24px",
+                boxShadow: "var(--shadow)",
+                animation: "pulse 1.5s ease-in-out infinite"
+              }}>
                 <div style={{
                   height: "2.5rem",
                   background: "linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%)",
@@ -120,7 +123,6 @@ export default function Brands() {
           )}
         </div>
 
-        {/* Mensagem caso não tenha marcas */}
         {brands.length === 0 && (
           <div style={{
             textAlign: "center",

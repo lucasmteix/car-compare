@@ -1,17 +1,38 @@
 import { useState, useEffect } from "react";
 import CarCard from "../components/CarCard";
-import { useNavigate } from "react-router-dom";
-import { useTheme } from "../ThemeProvider"; export default function Catalog() {
-  const { isDark } = useTheme(); 
+import { useNavigate, useParams } from "react-router-dom";
+import { useTheme } from "../ThemeProvider";
+
+export default function Catalog() {
+  const { isDark } = useTheme();
   const [cars, setCars] = useState([]);
   const [query, setQuery] = useState("");
   const [selectedCars, setSelectedCars] = useState([]);
-  const navigate = useNavigate();  useEffect(() => {
+  const navigate = useNavigate();
+  const { brand: urlBrand } = useParams(); // pega /catalog/toyota → "toyota"
+
+  // Carrega todos os carros
+  useEffect(() => {
     fetch("http://localhost:3000/api/cars")
       .then(res => res.json())
       .then(data => setCars(data))
       .catch(err => console.error("Erro ao carregar os carros:", err));
-  }, []);  const filteredCars = cars.filter(car => {
+  }, []);
+
+  // Preenche automaticamente a busca quando vem de uma marca (ex: /catalog/toyota)
+  useEffect(() => {
+    if (urlBrand) {
+      const niceBrand = urlBrand
+        .replace(/-/g, " ")
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(" ");
+      setQuery(niceBrand);
+    }
+  }, [urlBrand]);
+
+  // Filtragem dos carros
+  const filteredCars = cars.filter(car => {
     const lowerQuery = query.toLowerCase();
     return (
       car.brand?.toLowerCase().includes(lowerQuery) ||
@@ -21,7 +42,9 @@ import { useTheme } from "../ThemeProvider"; export default function Catalog() {
       car.traction?.toLowerCase().includes(lowerQuery) ||
       car.year?.toString().includes(lowerQuery)
     );
-  });  const handleCompare = (car) => {
+  });
+
+  const handleCompare = (car) => {
     if (selectedCars.find(c => c.id === car.id)) {
       setSelectedCars(selectedCars.filter(c => c.id !== car.id));
     } else if (selectedCars.length < 4) {
@@ -29,38 +52,45 @@ import { useTheme } from "../ThemeProvider"; export default function Catalog() {
     } else {
       alert("Você só pode comparar até 4 carros!");
     }
-  };  const goToCompare = () => {
+  };
+
+  const goToCompare = () => {
     if (selectedCars.length >= 2) {
-      navigate('/compare', { state: { cars: selectedCars } });
+      navigate("/compare", { state: { cars: selectedCars } });
     } else {
       alert("Selecione pelo menos 2 carros para comparar!");
     }
-  };   return (
+  };
+
+  return (
     <>
-      {/* Conteúdo principal do catálogo */}
-      <div style={{
-        backgroundColor: "var(--bg-page)",
-        color: "var(--text)",
-        borderRadius: "24px",
-        padding: "2.5rem",
-        margin: "2rem auto",
-        maxWidth: "1500px",
-        boxShadow: "var(--shadow)",
-        transition: "all 0.4s ease",
-        paddingBottom: "120px" // espaço pro FAB não sobrepor
-      }}>
-        {/* Título + subtítulo */}
+      <div
+        style={{
+          backgroundColor: "var(--bg-page)",
+          color: "var(--text)",
+          borderRadius: "24px",
+          padding: "2.5rem",
+          margin: "2rem auto",
+          maxWidth: "1500px",
+          boxShadow: "var(--shadow)",
+          transition: "all 0.4s ease",
+          paddingBottom: "120px"
+        }}
+      >
+        {/* Título dinâmico */}
         <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <h1 style={{ 
-            fontSize: "2.8rem", 
-            fontWeight: "bold", 
-            marginBottom: "0.5rem",
-            background: "linear-gradient(90deg, var(--accent), #60a5fa)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text"
-          }}>
-            Catálogo de Carros
+          <h1
+            style={{
+              fontSize: "2.8rem",
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              background: "linear-gradient(90deg, var(--accent), #60a5fa)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text"
+            }}
+          >
+            {urlBrand ? `${query} Disponíveis` : "Catálogo de Carros"}
           </h1>
           <p style={{ fontSize: "1.3rem", color: "var(--text-muted)" }}>
             Selecione até 4 veículos para comparar
@@ -69,44 +99,97 @@ import { useTheme } from "../ThemeProvider"; export default function Catalog() {
 
         {/* Barra de pesquisa */}
         <div style={{ maxWidth: "700px", margin: "0 auto 3rem", position: "relative" }}>
-          {/* ... seu input e svg ... */}
+          <input
+            type="text"
+            placeholder="Buscar por marca, modelo, ano, categoria..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "1.1rem 1.4rem 1.1rem 3.8rem",
+              borderRadius: "20px",
+              border: `2px solid var(--border)`,
+              backgroundColor: "var(--bg-input)",
+              color: "var(--text)",
+              fontSize: "1.15rem",
+              outline: "none",
+              boxShadow: "var(--shadow)",
+              transition: "all 0.3s ease"
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "var(--accent)";
+              e.target.style.boxShadow = "0 0 0 4px rgba(59, 130, 246, 0.2)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "var(--border)";
+              e.target.style.boxShadow = "var(--shadow)";
+            }}
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="28px"
+            viewBox="0 -960 960 960"
+            width="28px"
+            fill="var(--text-muted)"
+            style={{
+              position: "absolute",
+              left: "20px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              pointerEvents: "none"
+            }}
+          >
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+          </svg>
         </div>
 
         {/* Grid de carros */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
-          gap: "2.5rem",
-          padding: "1rem",
-          maxWidth: "1600px",
-          margin: "0 auto"
-        }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
+            gap: "2.5rem",
+            padding: "1rem",
+            maxWidth: "1600px",
+            margin: "0 auto"
+          }}
+        >
           {filteredCars.length > 0 ? (
-            filteredCars.map(car => (
+            filteredCars.map((car) => (
               <CarCard
                 key={car.id}
                 car={car}
                 onCompare={handleCompare}
-                isSelected={selectedCars.some(c => c.id === car.id)}
+                isSelected={selectedCars.some((c) => c.id === car.id)}
               />
             ))
           ) : (
-            <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: "4rem", color: "var(--text-muted)", fontSize: "1.4rem" }}>
+            <div
+              style={{
+                gridColumn: "1 / -1",
+                textAlign: "center",
+                padding: "4rem",
+                color: "var(--text-muted)",
+                fontSize: "1.4rem"
+              }}
+            >
               Nenhum carro encontrado para sua busca
             </div>
           )}
         </div>
       </div>
 
-      {/* BOTÃO FLUTUANTE (FAB) — DENTRO do return e do fragment */}
+      {/* Botão flutuante */}
       {selectedCars.length > 0 && (
-        <div style={{
-          position: "fixed",
-          bottom: "30px",
-          right: "30px",
-          zIndex: 999,
-          animation: selectedCars.length >= 2 ? "pulse 2s infinite" : "none"
-        }}>
+        <div
+          style={{
+            position: "fixed",
+            bottom: "30px",
+            right: "30px",
+            zIndex: 999,
+            animation: selectedCars.length >= 2 ? "pulse 2s infinite" : "none"
+          }}
+        >
           <button
             onClick={goToCompare}
             disabled={selectedCars.length < 2}
@@ -127,25 +210,31 @@ import { useTheme } from "../ThemeProvider"; export default function Catalog() {
               backdropFilter: "blur(12px)",
               border: "3px solid rgba(255,255,255,0.2)"
             }}
-            onMouseEnter={(e) => selectedCars.length >= 2 && (
-              e.currentTarget.style.backgroundColor = "var(--accent-hover)",
-              e.currentTarget.style.transform = "translateY(-4px) scale(1.05)"
-            )}
-            onMouseLeave={(e) => selectedCars.length >= 2 && (
-              e.currentTarget.style.backgroundColor = "var(--accent)",
-              e.currentTarget.style.transform = "translateY(0) scale(1)"
-            )}
+            onMouseEnter={(e) =>
+              selectedCars.length >= 2 &&
+              ((e.currentTarget.style.backgroundColor = "var(--accent-hover)"),
+              (e.currentTarget.style.transform = "translateY(-4px) scale(1.05)"))
+            }
+            onMouseLeave={(e) =>
+              selectedCars.length >= 2 &&
+              ((e.currentTarget.style.backgroundColor = "var(--accent)"),
+              (e.currentTarget.style.transform = "translateY(0) scale(1)"))
+            }
           >
-            Comparar  os {selectedCars.length} carro{selectedCars.length > 1 ? "s" : ""}
+            Comparar os {selectedCars.length} carro{selectedCars.length > 1 ? "s" : ""}
           </button>
         </div>
       )}
 
-      {/* Animação do pulse */}
       <style jsx>{`
         @keyframes pulse {
-          0%, 100% { box-shadow: 0 12px 35px rgba(13,71,161,0.5); }
-          50% { box-shadow: 0 12px 50px rgba(13,71,161,0.8); }
+          0%,
+          100% {
+            box-shadow: 0 12px 35px rgba(13, 71, 161, 0.5);
+          }
+          50% {
+            box-shadow: 0 12px 50px rgba(13, 71, 161, 0.8);
+          }
         }
       `}</style>
     </>

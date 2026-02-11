@@ -1,3 +1,5 @@
+# Language / Idioma: [Português](README.pt-BR.md) | [English](README.md)
+
 # CarCompare
 
 **CarCompare** is a full-stack web application for comparing specifications of different vehicle models.  
@@ -82,6 +84,7 @@ The entire system is orchestrated using **Docker Compose**, including:
 
 ```bash
 docker compose up --build
+```
 
 ## Serviços disponíveis:
     Frontend → http://localhost:8080

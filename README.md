@@ -1,46 +1,103 @@
 # CarCompare
 
-**CarCompare** é uma aplicação web para comparar especificações de diferentes modelos de carros. O objetivo é permitir que usuários visualizem informações como potência, torque, peso, tipo de tração, velocidade máxima e categoria, além de possibilitar futuras comparações e análises de consumo/gastos mensais.
+**CarCompare** is a full-stack web application for comparing specifications of different vehicle models.  
+The goal is to allow users to view and compare technical data such as power, torque, weight, drivetrain, top speed, fuel type, and price.
+
+The system is fully containerized using Docker Compose, integrating frontend, backend, and a MySQL database.
+
+## Architecture Overview
+
+The application follows a **modular and decoupled architecture**, composed of:
+
+- **Frontend**: React (Single Page Application)
+- **Backend**: Node.js + Express (REST API)
+- **Database**: MySQL 8
+- **Infrastructure**: Docker and Docker Compose
+
+## Features
+
+- Vehicle catalog with detailed specifications
+- Vehicle filtering by brand and category
+- Individual vehicle detail view
+- Vehicle comparison
+- Trip and consumption calculator (fuel / electric)
+- Light and dark theme support
+- Full system execution with a single Docker command
 
 ## Backend
 
-O backend é construído com **Node.js e Express** e fornece uma API simples para retornar informações de carros.  
-Atualmente, os dados estão **hardcoded** (armazenados diretamente em um array em memória), mas futuramente serão integrados a um banco MySQL.
+- Developed with **Node.js and Express**
+- REST API consumed by the frontend
+- MySQL connection via environment variables
+- Structure prepared for future expansion (new routes and filters)
 
-### Rotas disponíveis
+### Main Endpoints
 
-- `GET /cars` → retorna a lista completa de carros.  
-- `GET /cars/:id` → retorna os detalhes de um carro específico pelo `id`.
+- `GET /cars` → returns the complete list of vehicles  
+- `GET /cars/:id` → returns details of a specific vehicle by `id`
 
-## Frontend (Docker Temporário)
+## Frontend (Temporary Docker Setup)
 
-O frontend é construído com **React** utilizando **Create React App (CRA)**.  
-Atualmente, existe uma forma temporária de rodar apenas o frontend usando Docker, **sem precisar instalar Node, npm ou dependências localmente**.  
-Futuramente, todo o projeto será executado com **Docker Compose**, integrando frontend, backend e banco de dados.
+- Developed with **React**
+- Navigation using **React Router**
+- Component-based architecture
+- Theme management using **Context API**
+- Fully decoupled from the backend
 
-### Como rodar o frontend via Docker
+The frontend is built with **React** using **Create React App (CRA)**.  
+Currently, there is a temporary way to run only the frontend using Docker, **without installing Node, npm, or dependencies locally**.  
+In the future, the entire project will run using **Docker Compose**, integrating frontend, backend, and the MySQL database.
 
-1. Navegue até a pasta `frontend`:
+### Main Routes
+
+- `/` → General vehicle catalog
+- `/catalog/:brand` → Vehicle catalog filtered by brand
+- `/compare` → Vehicle comparison
+- `/brands` → Brand listing
+- `/viagem` → Trip calculator
+
+## Database
+
+- **MySQL 8**
+- Automatic schema initialization via Docker
+- Table structured with real-world automotive attributes
+- Support for combustion, hybrid, and electric vehicles
+
+### Example Attributes
+
+- Power (HP), torque (Nm), weight (kg)
+- Drivetrain type (FWD, RWD, AWD)
+- Fuel type and efficiency
+- Price and category
+
+## Docker and Docker Compose
+
+The entire system is orchestrated using **Docker Compose**, including:
+
+- MySQL database
+- Backend API
+- Frontend application
+
+### How to Run the Project
 
 ```bash
-cd frontend
-```
+docker compose up --build
 
-2. Construa a imagem Docker
+## Serviços disponíveis:
+    Frontend → http://localhost:8080
+    Backend → http://localhost:3000
+    Database → MySQL on port 3306
 
-```bash
-docker build -t car-catalog-frontend .
-```
 
-3. Excute o container:
+## Technologies Used
 
-```bash
-docker run -p 3000:80 car-catalog-frontend
-```
+    - React
+    - Node.js
+    - Express
+    - MySQL 8
+    - Docker
+    - Docker Compose
+    - JavaScript (ES6+)
+    - REST API
+    - Relational database modeling 
 
-4. Abra o navegador e acesse:
-
-http://localhost:3000
-
->⚠️ Observação: Esta é uma solução temporária para testar o frontend
-> isoladamente. Mais tarde, toda a aplicação será executada com Docker Compose para rodar frontend, backend e banco MySQL integrados.

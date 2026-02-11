@@ -1,0 +1,96 @@
+# Language / Idioma: [Português](README.pt-BR.md) | [English](README.md)
+
+# CarCompare
+
+**CarCompare** é uma aplicação web full stack para comparação de especificações de diferentes modelos de veículos.
+O objetivo é permitir que usuários visualizem e comparem dados técnicos como potência, torque, peso, tipo de tração, velocidade máxima tipo de combustível e preço.
+O sistema é totalmente containerizado com Docker Compose, integrando frontend, backend e banco de dados MySQL
+
+## Visão Geral da Arquitetura 
+A Aplicação segue uma  arquitetura modular e desacoplada composta por:
+    - Frontend: React (Single Page Application)
+    - Backend: Node.js + Express (API REST)
+    - Banco de Dados: MySQL 8
+    - Infraestrutura: Docker e Docker Compose 
+
+## Funcionalidades 
+    - Catálogo de veículos com especificações detalhadas
+    - Filtro de veículos por marca e categoria
+    - Visualização de detalhes individuais de cada carro 
+    - Comparação entre veículos
+    - Calculadora de viagem e consumo (combustível/elétrico)
+    - Suporte a tema claro e escuro 
+    - Execução completa do sistema com um unico comando Docker
+
+## Backend
+
+    - Desenvolvido com  **Node.js e Express**
+    - API REST para consumo de dados pelo Frontend
+    - Conexão com MySQL via variáveis de ambiente
+    - Estrutura preparada para expansão (novas rotas e filtros)
+
+### Endpoints principais 
+
+- `GET /cars` → retorna a lista completa de carros.  
+- `GET /cars/:id` → retorna os detalhes de um carro específico pelo `id`.
+
+## Frontend (Docker Temporário)
+
+    - Desenvolvido com React
+    - Navegação utilizando React Router 
+    - Arquitetura baseada em componentes 
+    - Gerenciamento de tema com Context API
+    - Totalmente desacoplado do Backend
+
+O frontend é construído com **React** utilizando **Create React App (CRA)**.  
+Atualmente, existe uma forma temporária de rodar apenas o frontend usando Docker, **sem precisar instalar Node, npm ou dependências localmente**.  
+Futuramente, todo o projeto será executado com **Docker Compose**, integrando frontend, backend e banco de dados.
+
+### Endpoints principais:
+
+    - / → Catálogo geral de veículos
+    - /catalog/:brand → Catálogo filtrado por marca
+    - /compare → Comparação de veículos
+    - /brands → Lista de marcas
+    - /viagem → Calculadora de viagem 
+
+## Banco De Dados 
+    - MySQL 8
+    - Inicialização automática do schema via Docker
+    - Tabela estruturada com atributos reais do setor automotivo 
+    - Suporte a veículos a combustão, híbridos e elétricos
+
+### Exemplos de Atributos:
+    - Potência (HP), torque (Nm), peso (kg)
+    - Tipo de Tração (FWD, RW, AWD)
+    - Tipo de combustível e eficiência 
+    - Preço e categoria
+
+## Docker e Docker-Compose
+Todo o sistema é orquestrado utilizando Docker-Compose, incluindo:
+    - Banco de Dados MySQL
+    - API Backend
+    - Aplicação Frontend
+
+### Como executar o projeto 
+```
+docker compose up --build
+```
+
+## Serviços disponíveis:
+    Frontend → http://localhost:8080
+    Backend → http://localhost:3000
+    Banco de Dados → MySQL na porta 3306
+
+
+## Tecnologias Utilizadas 
+
+    - React
+    - Node.js
+    - Express
+    - MySQL 8
+    - Docker 
+    - Docker Compose 
+    - JavaScript (ES6+)
+    - API REST
+    - Modelagem de banco de dados relacional 

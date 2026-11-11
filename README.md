@@ -1,4 +1,4 @@
-# Language / Idioma: [Português](README.pt-BR.md) | [English](README.md)
+# Language / Idioma:  [English](README.md) | [Português](README.pt-BR.md)
 
 # CarCompare
 

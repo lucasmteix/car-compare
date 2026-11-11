@@ -2,8 +2,11 @@
 
 # CarCompare
 
+<img width="1280" height="696" alt="image" src="https://github.com/user-attachments/assets/156d7ea7-cbe0-4f51-9c84-5fe616c26299" />
+
+
 **CarCompare** is a full-stack web application for comparing specifications of different vehicle models.  
-The goal is to allow users to view and compare technical data such as power, torque, weight, drivetrain, top speed, fuel type, and price.
+The goal is to allow car seekers to view and compare technical data such as power, torque, weight, drivetrain, top speed, fuel type, and price.
 
 The system is fully containerized using Docker Compose, integrating frontend, backend, and a MySQL database.
 
@@ -15,6 +18,10 @@ The application follows a **modular and decoupled architecture**, composed of:
 - **Backend**: Node.js + Express (REST API)
 - **Database**: MySQL 8
 - **Infrastructure**: Docker and Docker Compose
+
+## My contribution
+
+I came up with the idea, chose the stack for the project, created the first draft of the frontend, added endpoints and routes and fixed the Docker compose.
 
 ## Features
 
